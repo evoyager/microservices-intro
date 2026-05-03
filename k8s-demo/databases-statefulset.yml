@@ -1,0 +1,134 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: k8s-program
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: resources-db
+  namespace: k8s-program
+spec:
+  clusterIP: None
+  selector:
+    app: resources-db-pod
+  ports:
+    - name: postgresql
+      protocol: TCP
+      port: 5433
+      targetPort: 5433
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: songs-db
+  namespace: k8s-program
+spec:
+  clusterIP: None
+  selector:
+    app: songs-db-pod
+  ports:
+    - name: postgresql
+      protocol: TCP
+      port: 5432
+      targetPort: 5432
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: resources-db
+  namespace: k8s-program
+spec:
+  serviceName: resources-db
+  replicas: 1
+  selector:
+    matchLabels:
+      app: resources-db-pod
+  template:
+    metadata:
+      labels:
+        app: resources-db-pod
+        owner: ievgengusar
+    spec:
+      containers:
+        - name: resources-db-container
+          image: postgres:17
+          ports:
+            - containerPort: 5433
+              name: postgresql
+          env:
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_PASSWORD
+              value: "password123"
+            - name: POSTGRES_DB
+              value: "resources_db"
+            - name: PGPORT
+              value: "5433"
+          volumeMounts:
+            - name: resources-db-storage
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: resources-db-storage
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: local-path
+        resources:
+          requests:
+            storage: 1Gi
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: songs-db
+  namespace: k8s-program
+spec:
+  serviceName: songs-db
+  replicas: 1
+  selector:
+    matchLabels:
+      app: songs-db-pod
+  template:
+    metadata:
+      labels:
+        app: songs-db-pod
+        owner: ievgengusar
+    spec:
+      containers:
+        - name: songs-db-container
+          image: postgres:17
+          ports:
+            - containerPort: 5432
+              name: postgresql
+          env:
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_PASSWORD
+              value: "password123"
+            - name: POSTGRES_DB
+              value: "songs_db"
+            - name: PGPORT
+              value: "5432"
+          volumeMounts:
+            - name: songs-db-storage
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: songs-db-storage
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: local-path
+        resources:
+          requests:
+            storage: 1Gi
