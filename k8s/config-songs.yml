@@ -18,3 +18,15 @@ data:
 
   # Ensure Hibernate uses 'update' to avoid recreate/drop on restarts
   SPRING_JPA_HIBERNATE_DDL_AUTO: "update"
+
+  init-songs.sql: |-
+    -- SQL init script for songs database (can be mounted into /docker-entrypoint-initdb.d/)
+    CREATE TABLE IF NOT EXISTS songs (
+        id SERIAL PRIMARY KEY,
+        name TEXT,
+        artist TEXT,
+        album TEXT,
+        length TEXT,
+        resource_id INTEGER UNIQUE NOT NULL,
+        year TEXT
+    );

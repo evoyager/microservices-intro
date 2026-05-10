@@ -80,6 +80,15 @@ spec:
           volumeMounts:
             - name: resources-db-storage
               mountPath: /var/lib/postgresql/data
+            - name: resources-init-sql
+              mountPath: /docker-entrypoint-initdb.d
+      volumes:
+        - name: resources-init-sql
+          configMap:
+            name: resources-config
+            items:
+              - key: init-resources.sql
+                path: init-resources.sql
   volumeClaimTemplates:
     - metadata:
         name: resources-db-storage
@@ -127,6 +136,15 @@ spec:
           volumeMounts:
             - name: songs-db-storage
               mountPath: /var/lib/postgresql/data
+            - name: songs-init-sql
+              mountPath: /docker-entrypoint-initdb.d
+      volumes:
+        - name: songs-init-sql
+          configMap:
+            name: songs-config
+            items:
+              - key: init-songs.sql
+                path: init-songs.sql
   volumeClaimTemplates:
     - metadata:
         name: songs-db-storage

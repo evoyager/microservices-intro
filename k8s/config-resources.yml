@@ -20,3 +20,10 @@ data:
 
   # Ensure Hibernate uses 'update' to avoid recreate/drop on restarts
   SPRING_JPA_HIBERNATE_DDL_AUTO: "update"
+
+  init-resources.sql: |-
+    -- SQL init script for resources database (can be mounted into /docker-entrypoint-initdb.d/)
+    CREATE TABLE IF NOT EXISTS resources (
+        id SERIAL PRIMARY KEY,
+        blob BYTEA
+    );
