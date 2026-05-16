@@ -11,7 +11,7 @@ metadata:
   name: resources-db
   namespace: k8s-program
 spec:
-  clusterIP: None
+  type: ClusterIP
   selector:
     app: resources-db-pod
   ports:
@@ -28,7 +28,7 @@ metadata:
   name: songs-db
   namespace: k8s-program
 spec:
-  clusterIP: None
+  type: ClusterIP
   selector:
     app: songs-db-pod
   ports:
@@ -85,7 +85,8 @@ spec:
           startupProbe:
             exec:
               command:
-                - "CMD-SHELL"
+                - "sh"
+                - "-c"
                 - "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB -p $PGPORT"
             initialDelaySeconds: 10
             periodSeconds: 10
@@ -93,7 +94,8 @@ spec:
           livenessProbe:
             exec:
               command:
-                - "CMD-SHELL"
+                - "sh"
+                - "-c"
                 - "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB -p $PGPORT"
             initialDelaySeconds: 30
             periodSeconds: 10
@@ -101,7 +103,8 @@ spec:
           readinessProbe:
             exec:
               command:
-                - "CMD-SHELL"
+                - "sh"
+                - "-c"
                 - "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB -p $PGPORT"
             initialDelaySeconds: 15
             periodSeconds: 10
@@ -165,7 +168,8 @@ spec:
           startupProbe:
             exec:
               command:
-                - "CMD-SHELL"
+                - "sh"
+                - "-c"
                 - "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB -p $PGPORT"
             initialDelaySeconds: 10
             periodSeconds: 10
@@ -173,7 +177,8 @@ spec:
           livenessProbe:
             exec:
               command:
-                - "CMD-SHELL"
+                - "sh"
+                - "-c"
                 - "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB -p $PGPORT"
             initialDelaySeconds: 30
             periodSeconds: 10
@@ -181,7 +186,8 @@ spec:
           readinessProbe:
             exec:
               command:
-                - "CMD-SHELL"
+                - "sh"
+                - "-c"
                 - "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB -p $PGPORT"
             initialDelaySeconds: 15
             periodSeconds: 10
