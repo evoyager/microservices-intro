@@ -36,6 +36,9 @@ dependencies {
     implementation 'org.apache.tika:tika-core:2.6.0'
     implementation 'org.apache.tika:tika-parsers-standard-package:2.6.0'
 
+    // Add actuator for health endpoints
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
