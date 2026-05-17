@@ -51,6 +51,8 @@ spec:
     matchLabels:
       app: resources-ms-pod
   replicas: 2
+  strategy:
+    type: RollingUpdate
   template:
     metadata:
       labels:
@@ -59,8 +61,7 @@ spec:
     spec:
       containers:
         - name: resources-ms-container
-          image: microservices-intro/resources-ms:latest
-          imagePullPolicy: Never
+          image: microservices-intro/resources-ms:2.0.0
           ports:
             - containerPort: 8080
           envFrom:
@@ -102,6 +103,8 @@ spec:
     matchLabels:
       app: songs-ms-pod
   replicas: 2
+  strategy:
+    type: RollingUpdate
   template:
     metadata:
       labels:
@@ -110,8 +113,7 @@ spec:
     spec:
       containers:
         - name: songs-ms-container
-          image: microservices-intro/songs-ms:latest
-          imagePullPolicy: Never
+          image: microservices-intro/songs-ms:2.0.0
           ports:
             - containerPort: 8081
           envFrom:
@@ -143,6 +145,10 @@ spec:
             initialDelaySeconds: 15
             periodSeconds: 10
             failureThreshold: 3
+      volumes:
+        - name: songs-storage
+          persistentVolumeClaim:
+            claimName: songs-pvc
 
 ---
 
