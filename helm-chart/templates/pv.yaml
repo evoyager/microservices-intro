@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: songs-pv
+spec:
+  capacity:
+    storage: {{ .Values.storageSize }}
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: {{ .Values.storageClass }}
+  hostPath:
+    path: {{ .Values.hostPathSongs }}
+    type: DirectoryOrCreate
+

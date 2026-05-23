@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resources-ms
+  namespace: "{{ .Values.namespace }}"
+spec:
+  selector:
+    matchLabels:
+      app: resources-ms-pod
+  replicas: {{ .Values.resourcesReplicaCount | int }}
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: resources-ms-pod
+        owner: ievgengusar
+    spec:
+      containers:
+        - name: resources-ms-container
+          image: "{{ .Values.resourcesImage }}"
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: resources-config
+            - secretRef:
+                name: db-credentials
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 120
+            periodSeconds: 10
+            failureThreshold: 6
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            failureThreshold: 6
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: songs-ms
+  namespace: "{{ .Values.namespace }}"
+spec:
+  selector:
+    matchLabels:
+      app: songs-ms-pod
+  replicas: {{ .Values.songsReplicaCount | int }}
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: songs-ms-pod
+        owner: ievgengusar
+    spec:
+      containers:
+        - name: songs-ms-container
+          image: "{{ .Values.songsImage }}"
+          ports:
+            - containerPort: 8081
+          envFrom:
+            - configMapRef:
+                name: songs-config
+            - secretRef:
+                name: db-credentials
+          volumeMounts:
+            - name: songs-storage
+              mountPath: /data
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8081
+            initialDelaySeconds: 120
+            periodSeconds: 10
+            failureThreshold: 6
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8081
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            failureThreshold: 6
+      volumes:
+        - name: songs-storage
+          persistentVolumeClaim:
+            claimName: songs-pvc

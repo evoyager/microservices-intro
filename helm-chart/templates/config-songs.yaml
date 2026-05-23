@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: songs-config
+  namespace: "{{ .Values.namespace }}"
+data:
+  SONGS_MS_NAME: "songs-ms"
+  SONGS_MS_PORT: "8081"
+  SONGS_DB_URL: "songs-db"
+  SONGS_DB_PORT: "5432"
+  ENABLE_EUREKA_CLIENT: "false"
+  EUREKA_URI: "eureka"
+  SPRING_JPA_HIBERNATE_DDL_AUTO: "update"
+  init-songs.sql: |-
+    -- SQL init script for songs database (can be mounted into /docker-entrypoint-initdb.d/)
+    CREATE TABLE IF NOT EXISTS songs (
+        id SERIAL PRIMARY KEY,
+        name TEXT,
+        artist TEXT,
+        album TEXT,
+        length TEXT,
+        resource_id INTEGER UNIQUE NOT NULL,
+        year TEXT
+    );
