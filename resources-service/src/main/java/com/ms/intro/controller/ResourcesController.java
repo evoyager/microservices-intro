@@ -2,6 +2,7 @@ package com.ms.intro.controller;
 
 import com.ms.intro.domain.ResourceDomain;
 import com.ms.intro.dto.IdDto;
+import com.ms.intro.dto.VersionDto;
 import com.ms.intro.exceptions.CannotUploadFileException;
 import com.ms.intro.exceptions.FileNotExistException;
 import com.ms.intro.exceptions.InvalidIdsForDeletionException;
@@ -9,8 +10,9 @@ import com.ms.intro.exceptions.NotMp3Exception;
 import com.ms.intro.repository.ResourcesRepo;
 import com.ms.intro.service.ResourcesService;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -22,20 +24,26 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 @RestController
 @RequestMapping(path = "/resources")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ResourcesController  {
 
     private final ResourcesRepo repo;
     private final ResourcesService service;
     private Environment env;
+    @Value("${test-properties.version}")
+    private Integer version;
+
+    @GetMapping("/check")
+    public ResponseEntity<VersionDto> healthCheck() {
+        var responseDto = new VersionDto();
+        responseDto.setVersion(version);
+        return ResponseEntity.ok(responseDto);
+    }
 
     @PostMapping(path = "/file")
     @ResponseStatus(value = HttpStatus.OK)

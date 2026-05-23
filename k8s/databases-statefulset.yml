@@ -1,0 +1,211 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: k8s-program
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: resources-db
+  namespace: k8s-program
+spec:
+  type: ClusterIP
+  selector:
+    app: resources-db-pod
+  ports:
+    - name: postgresql
+      protocol: TCP
+      port: 5433
+      targetPort: 5433
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: songs-db
+  namespace: k8s-program
+spec:
+  type: ClusterIP
+  selector:
+    app: songs-db-pod
+  ports:
+    - name: postgresql
+      protocol: TCP
+      port: 5432
+      targetPort: 5432
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: resources-db
+  namespace: k8s-program
+spec:
+  serviceName: resources-db
+  replicas: 1
+  selector:
+    matchLabels:
+      app: resources-db-pod
+  template:
+    metadata:
+      labels:
+        app: resources-db-pod
+        owner: ievgengusar
+    spec:
+      containers:
+        - name: resources-db-container
+          image: postgres:17
+          ports:
+            - containerPort: 5433
+              name: postgresql
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              value: "resources_db"
+            - name: PGPORT
+              value: "5433"
+          volumeMounts:
+            - name: resources-db-storage
+              mountPath: /var/lib/postgresql/data
+            - name: resources-init-sql
+              mountPath: /docker-entrypoint-initdb.d
+          startupProbe:
+            exec:
+              command:
+                - "sh"
+                - "-c"
+                - "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB -p $PGPORT"
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 30
+          livenessProbe:
+            exec:
+              command:
+                - "sh"
+                - "-c"
+                - "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB -p $PGPORT"
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+                - "sh"
+                - "-c"
+                - "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB -p $PGPORT"
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            failureThreshold: 3
+      volumes:
+        - name: resources-init-sql
+          configMap:
+            name: resources-config
+            items:
+              - key: init-resources.sql
+                path: init-resources.sql
+  volumeClaimTemplates:
+    - metadata:
+        name: resources-db-storage
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: standard
+        resources:
+          requests:
+            storage: 1Gi
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: songs-db
+  namespace: k8s-program
+spec:
+  serviceName: songs-db
+  replicas: 1
+  selector:
+    matchLabels:
+      app: songs-db-pod
+  template:
+    metadata:
+      labels:
+        app: songs-db-pod
+        owner: ievgengusar
+    spec:
+      containers:
+        - name: songs-db-container
+          image: postgres:17
+          ports:
+            - containerPort: 5432
+              name: postgresql
+          envFrom:
+            - secretRef:
+                name: db-credentials
+          env:
+            - name: POSTGRES_DB
+              value: "songs_db"
+            - name: PGPORT
+              value: "5432"
+          volumeMounts:
+            - name: songs-db-storage
+              mountPath: /var/lib/postgresql/data
+            - name: songs-init-sql
+              mountPath: /docker-entrypoint-initdb.d
+          startupProbe:
+            exec:
+              command:
+                - "sh"
+                - "-c"
+                - "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB -p $PGPORT"
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 30
+          livenessProbe:
+            exec:
+              command:
+                - "sh"
+                - "-c"
+                - "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB -p $PGPORT"
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+                - "sh"
+                - "-c"
+                - "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB -p $PGPORT"
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            failureThreshold: 3
+      volumes:
+        - name: songs-init-sql
+          configMap:
+            name: songs-config
+            items:
+              - key: init-songs.sql
+                path: init-songs.sql
+  volumeClaimTemplates:
+    - metadata:
+        name: songs-db-storage
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: standard
+        resources:
+          requests:
+            storage: 1Gi

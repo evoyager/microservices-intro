@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: resources-config
+  namespace: k8s-program
+data:
+  # Application identity & server config
+  RESOURCES_MS_NAME: "resources-ms"
+  RESOURCES_MS_PORT: "8080"
+
+  # Database connection (non-sensitive parts)
+  RESOURCES_DB_URL: "resources-db"
+  RESOURCES_DB_PORT: "5433"
+
+  # Service discovery / other services
+  SONGS_MS_URL: "songs-ms"
+  SONGS_MS_PORT: "8081"
+  EUREKA_URI: "eureka"
+  ENABLE_EUREKA_CLIENT: "false"
+
+  # Ensure Hibernate uses 'update' to avoid recreate/drop on restarts
+  SPRING_JPA_HIBERNATE_DDL_AUTO: "update"
+
+  init-resources.sql: |-
+    -- SQL init script for resources database (can be mounted into /docker-entrypoint-initdb.d/)
+    CREATE TABLE IF NOT EXISTS resources (
+        id SERIAL PRIMARY KEY,
+        blob BYTEA
+    );
