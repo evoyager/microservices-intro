@@ -26,18 +26,30 @@ spec:
                 name: resources-config
             - secretRef:
                 name: db-credentials
+          env:
+            - name: SPRING_LOGGING_LEVEL_ROOT
+              value: "DEBUG"
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://resources-db:5433/resources_db"
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: POSTGRES_USER
           livenessProbe:
             httpGet:
               path: /actuator/health
               port: 8080
-            initialDelaySeconds: 120
+            initialDelaySeconds: 300
+            timeoutSeconds: 3
             periodSeconds: 10
             failureThreshold: 6
           readinessProbe:
             httpGet:
               path: /actuator/health
               port: 8080
-            initialDelaySeconds: 60
+            initialDelaySeconds: 150
+            timeoutSeconds: 3
             periodSeconds: 10
             failureThreshold: 6
 ---
@@ -69,6 +81,16 @@ spec:
                 name: songs-config
             - secretRef:
                 name: db-credentials
+          env:
+            - name: SPRING_LOGGING_LEVEL_ROOT
+              value: "DEBUG"
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://songs-db:5432/songs_db"
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: POSTGRES_USER
           volumeMounts:
             - name: songs-storage
               mountPath: /data
@@ -76,14 +98,16 @@ spec:
             httpGet:
               path: /actuator/health
               port: 8081
-            initialDelaySeconds: 120
+            initialDelaySeconds: 300
+            timeoutSeconds: 3
             periodSeconds: 10
             failureThreshold: 6
           readinessProbe:
             httpGet:
               path: /actuator/health
               port: 8081
-            initialDelaySeconds: 60
+            initialDelaySeconds: 150
+            timeoutSeconds: 3
             periodSeconds: 10
             failureThreshold: 6
       volumes:

@@ -10,8 +10,8 @@ songsImage: "microservices-intro/songs-ms:2.0.0"
 resourcesDbImage: "postgres:17"
 songsDbImage: "postgres:17"
 
-nodePortResources: 30080
-nodePortSongs: 30081
+nodePortResources: 0
+nodePortSongs: 0
 
 storageClass: standard
 storageSize: 1Gi
@@ -19,7 +19,7 @@ storageSize: 1Gi
 # Database credentials (can be overridden during install)
 dbUser: postgres
 dbPassword: postgres
-springDatasourcePassword: password123
+springDatasourcePassword: postgres
 
 # Host path for songs PV
 hostPathSongs: /mnt/data/songs
