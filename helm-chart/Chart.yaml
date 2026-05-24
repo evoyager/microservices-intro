@@ -1,0 +1,6 @@
+apiVersion: v2
+name: microservices-intro
+description: A Helm chart to deploy microservices-intro applications
+type: application
+version: 0.1.0
+appVersion: "2.0.0"

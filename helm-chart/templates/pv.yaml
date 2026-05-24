@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: "{{ .Release.Name }}-songs-pv"
+  labels:
+    app.kubernetes.io/managed-by: Helm
+spec:
+  capacity:
+    storage: {{ .Values.storageSize }}
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: {{ .Values.storageClass }}
+  hostPath:
+    path: {{ .Values.hostPathSongs }}
+    type: DirectoryOrCreate
