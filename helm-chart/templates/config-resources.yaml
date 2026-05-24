@@ -3,6 +3,8 @@ kind: ConfigMap
 metadata:
   name: resources-config
   namespace: "{{ .Values.namespace }}"
+  labels:
+    {{- include "microservices-intro.labels" . | nindent 4 }}
 data:
   RESOURCES_MS_NAME: "resources-ms"
   RESOURCES_MS_PORT: "8080"
