@@ -1,10 +1,10 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: resources-root-ingress
+  name: resources-ingress
   namespace: "{{ .Values.namespace }}"
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /resources
+    nginx.ingress.kubernetes.io/rewrite-target: /resources$1
     nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   ingressClassName: nginx
@@ -12,7 +12,7 @@ spec:
     - host: resources
       http:
         paths:
-          - path: /$
+          - path: /(.*)
             pathType: ImplementationSpecific
             backend:
               service:
@@ -23,51 +23,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: resources-sub-ingress
-  namespace: "{{ .Values.namespace }}"
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /resources/$1
-    nginx.ingress.kubernetes.io/use-regex: "true"
-spec:
-  ingressClassName: nginx
-  rules:
-    - host: resources
-      http:
-        paths:
-          - path: /(.+)
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name: resources-ms
-                port:
-                  number: 8080
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: songs-root-ingress
-  namespace: "{{ .Values.namespace }}"
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /songs
-    nginx.ingress.kubernetes.io/use-regex: "true"
-spec:
-  ingressClassName: nginx
-  rules:
-    - host: songs
-      http:
-        paths:
-          - path: /$
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name: songs-ms
-                port:
-                  number: 8081
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: songs-sub-ingress
+  name: songs-ingress
   namespace: "{{ .Values.namespace }}"
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /songs/$1
@@ -78,7 +34,7 @@ spec:
     - host: songs
       http:
         paths:
-          - path: /(.+)
+          - path: /(.*)
             pathType: ImplementationSpecific
             backend:
               service:
