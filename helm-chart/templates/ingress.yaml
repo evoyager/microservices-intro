@@ -4,15 +4,15 @@ metadata:
   name: resources-ingress
   namespace: "{{ .Release.Namespace }}"
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /resources$1
     nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   ingressClassName: nginx
   rules:
-    - host: resources
+    - host: localhost
       http:
         paths:
-          - path: /(.*)
+          # Match /resources and any subpath (captures the remainder in group 2)
+          - path: /resources(/|$)(.*)
             pathType: ImplementationSpecific
             backend:
               service:
@@ -26,18 +26,18 @@ metadata:
   name: songs-ingress
   namespace: "{{ .Release.Namespace }}"
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /songs/$1
     nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   ingressClassName: nginx
   rules:
-    - host: songs
+    - host: localhost
       http:
         paths:
-          - path: /(.*)
+          # Match /songs and any subpath (captures the remainder in group 2)
+          - path: /songs(/|$)(.*)
             pathType: ImplementationSpecific
             backend:
               service:
                 name: songs-ms
                 port:
-                  number: 8081
+                  number: 8080
