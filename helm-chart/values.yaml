@@ -1,4 +1,4 @@
-namespace: k8s-program
+namespace: demo-ns
 
 resourcesReplicaCount: 2
 songsReplicaCount: 2
@@ -9,9 +9,6 @@ resourcesImage: "microservices-intro/resources-ms:2.0.0"
 songsImage: "microservices-intro/songs-ms:2.0.0"
 resourcesDbImage: "postgres:17"
 songsDbImage: "postgres:17"
-
-nodePortResources: 0
-nodePortSongs: 0
 
 storageClass: standard
 storageSize: 1Gi

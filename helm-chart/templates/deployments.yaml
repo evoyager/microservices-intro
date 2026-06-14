@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: resources-ms
-  namespace: "{{ .Values.namespace }}"
+  namespace: "{{ .Release.Namespace }}"
   labels:
     {{- include "microservices-intro.labels" . | nindent 4 }}
 spec:
@@ -59,7 +59,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: songs-ms
-  namespace: "{{ .Values.namespace }}"
+  namespace: "{{ .Release.Namespace }}"
   labels:
     {{- include "microservices-intro.labels" . | nindent 4 }}
 spec:

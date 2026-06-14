@@ -13,10 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
 @FeignClient(
-        name = "${songs.url}"
-        ,
-//        url = "http://${songs.url:localhost:8081}"
-        url = "http://${songs.url:localhost}:${songs.port:8081}"
+        name = "${songs.url}",
+        url = "http://${songs.url:localhost}:${songs.port}"
 )
 public interface SongServiceClient {
 

@@ -59,7 +59,7 @@ public class ResourcesController  {
         }
         return new IdDto(savedResource.getId());
     }
-    @PostMapping( consumes = "audio/mpeg")
+    @PostMapping(path = {"", "/"}, consumes = "audio/mpeg")
     @ResponseStatus(value = HttpStatus.OK)
     public IdDto createResource(@RequestBody byte[] bytes) {
         var savedResource = service.saveResource(bytes);

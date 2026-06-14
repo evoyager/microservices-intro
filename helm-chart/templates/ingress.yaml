@@ -1,0 +1,43 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: resources-ingress
+  namespace: "{{ .Release.Namespace }}"
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: localhost
+      http:
+        paths:
+          # Match /resources and any subpath (captures the remainder in group 2)
+          - path: /resources(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: resources-ms
+                port:
+                  number: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: songs-ingress
+  namespace: "{{ .Release.Namespace }}"
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: localhost
+      http:
+        paths:
+          # Match /songs and any subpath (captures the remainder in group 2)
+          - path: /songs(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: songs-ms
+                port:
+                  number: 8080
