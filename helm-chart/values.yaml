@@ -20,6 +20,3 @@ springDatasourcePassword: postgres
 
 # Host path for songs PV
 hostPathSongs: /mnt/data/songs
-
-# Ingress host (e.g. microservices.local — add to /etc/hosts pointing to the ingress controller)
-ingressHost: microservices.local

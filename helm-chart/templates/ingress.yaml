@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: resources-ingress
-  namespace: "{{ .Values.namespace }}"
+  namespace: "{{ .Release.Namespace }}"
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /resources$1
     nginx.ingress.kubernetes.io/use-regex: "true"
@@ -24,7 +24,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: songs-ingress
-  namespace: "{{ .Values.namespace }}"
+  namespace: "{{ .Release.Namespace }}"
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /songs/$1
     nginx.ingress.kubernetes.io/use-regex: "true"
